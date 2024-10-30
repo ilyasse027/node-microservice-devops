@@ -29,18 +29,31 @@ spec:
         image: mongo:latest
         ports:
         - containerPort: 27017
-        envFrom:
-        - configMapRef:
-            name: mongodb-config
-        - secretRef:
-            name: mongodb-secrets
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secrets
+              key: MONGO_INITDB_ROOT_USERNAME
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secrets
+              key: MONGO_INITDB_ROOT_PASSWORD
+        - name: MONGO_INITDB_DATABASE
+          value: "todo-app"
         volumeMounts:
         - name: mongodb-data
           mountPath: /data/db
+        - name: mongo-init
+          mountPath: /docker-entrypoint-initdb.d
       volumes:
       - name: mongodb-data
         persistentVolumeClaim:
           claimName: mongodb-pvc
+      - name: mongo-init
+        configMap:
+          name: mongo-init
 ---
 apiVersion: v1
 kind: Service
@@ -53,3 +66,4 @@ spec:
   ports:
   - port: 27017
     targetPort: 27017
+  type: ClusterIP  

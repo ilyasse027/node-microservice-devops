@@ -18,9 +18,9 @@ spec:
         image: ilyassepro/todo-app-frontend:latest
         ports:
         - containerPort: 3000
-        envFrom:
-        - configMapRef:
-            name: app-config
+        env:
+        - name: VITE_API_URL
+          value: "/api"
 ---
 apiVersion: v1
 kind: Service
@@ -33,4 +33,4 @@ spec:
   ports:
   - port: 80
     targetPort: 3000
-  type: ClusterIP    
+  type: ClusterIP

@@ -14,15 +14,21 @@ spec:
         app: todo-backend
     spec:
       containers:
-      - name: todo-backend
-        image: ilyassepro/todo-app-backend:latest
-        ports:
-        - containerPort: 5000
-        envFrom:
-        - configMapRef:
-            name: app-config
-        - secretRef:
-            name: app-secrets
+        - name: todo-backend
+          image: ilyassepro/todo-app-backend:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: MONGODB_URI
+            - name: API_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: API_PORT
 ---
 apiVersion: v1
 kind: Service
@@ -33,5 +39,6 @@ spec:
   selector:
     app: todo-backend
   ports:
-  - port: 5000
-    targetPort: 5000
+    - port: 5000
+      targetPort: 5000
+  type: ClusterIP

@@ -12,6 +12,18 @@ export default defineConfig({
     },
     hmr: {
       clientPort: 3000 // Ensure HMR works in Docker
+    },
+    deps: {
+      fallbackCJS: true
+    }
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/setupTests.js'],
+    include: ['src/**/*.{test,spec}.{js,jsx,ts,tsx}'],
+    coverage: {
+      reporter: ['text', 'json', 'html']
     }
   }
 });
